@@ -15,7 +15,7 @@ one you can find in the endpoint `/orders`, which is alredy implemented.
 Not every courier can see every order.
 
 - If the description of the order contains the words pizza, cake or flamingo,
-we can only show the order to the courier if they are equipped with a Glovo box.
+we can only show the order to the courier if they are equipped with a box.
 
 - If the order is further than 5km to the courier, we will only show it to
 couriers that move in motorcycle or electric scooter.
@@ -36,7 +36,7 @@ between 500 and 1000m)
 
 ## Experiment
 
-At Glovo we're always trying to improve how we do things, so we are going
+We're always trying to improve how we do things, so we are going
 to experiment a bit with how we filter and sort the orders we show to the
 couriers.
 
