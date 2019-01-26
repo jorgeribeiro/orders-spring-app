@@ -13,27 +13,24 @@ import java.util.List;
 
 @Component
 class CourierRepository {
-    private static final String COURIERS_FILE = "/couriers.json";
-    private static final List<Courier> couriers;
+	private static final String COURIERS_FILE = "/couriers.json";
+	private static final List<Courier> couriers;
 
-    static {
-        try (Reader reader = new InputStreamReader(CourierRepository.class.getResourceAsStream(COURIERS_FILE))) {
-            Type type = new TypeToken<List<Courier>>() {
-            }.getType();
-            couriers = new Gson().fromJson(reader, type);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	static {
+		try (Reader reader = new InputStreamReader(CourierRepository.class.getResourceAsStream(COURIERS_FILE))) {
+			Type type = new TypeToken<List<Courier>>() {
+			}.getType();
+			couriers = new Gson().fromJson(reader, type);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    Courier findById(String courierId) {
-        return couriers.stream()
-                .filter(courier -> courierId.equals(courier.getId()))
-                .findFirst()
-                .orElse(null);
-    }
+	Courier findById(String courierId) {
+		return couriers.stream().filter(courier -> courierId.equals(courier.getId())).findFirst().orElse(null);
+	}
 
-    List<Courier> findAll() {
-        return new ArrayList<>(couriers);
-    }
+	List<Courier> findAll() {
+		return new ArrayList<>(couriers);
+	}
 }
