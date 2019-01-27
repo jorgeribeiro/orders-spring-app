@@ -17,6 +17,9 @@ class OrderService {
 	@Value("${backender.order.long_distance_limit_km}")
 	Double longDistanceLimit;
 	
+	@Value("${backender.order.distance_slot}")
+	Double distanceSlot;
+	
 	List<Order> getOrdersByCourier(Courier courier, List<Order> orders) {
 		return orders
 				.stream()
