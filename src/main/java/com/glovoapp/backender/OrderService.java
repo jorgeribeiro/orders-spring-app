@@ -1,5 +1,6 @@
 package com.glovoapp.backender;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,10 +13,13 @@ import org.springframework.stereotype.Service;
 @EnableAutoConfiguration
 class OrderService {
 	@Value("#{'${backender.order.box}'.split(',')}")
-	List<String> boxOrders;
+	List<String> boxOrders;	
 	
-	@Value("${backender.order.long_distance_limit_km}")
+	@Value("${backender.order.long_distance_limit}")
 	Double longDistanceLimit;
+	
+	@Value("#{'${backender.order.sort}'.split(',')}")
+	List<String> ordersSort;
 	
 	@Value("${backender.order.distance_slot}")
 	Double distanceSlot;
@@ -25,6 +29,7 @@ class OrderService {
 				.stream()
 				.filter(order -> filterBoxOrders(courier.getBox(), order.getDescription()))
 				.filter(order -> filterLongDistanceOrders(courier.getVehicle(), courier.getLocation(), order.getPickup()))
+				.sorted(sortOrdersByDistance(courier.getLocation()))
 				.collect(Collectors.toList());
 	}
 	
@@ -36,6 +41,10 @@ class OrderService {
 		return vehicleType == Vehicle.ELECTRIC_SCOOTER || 
 				vehicleType == Vehicle.MOTORCYCLE ||
 				DistanceCalculator.calculateDistance(courierLocation, orderPickup) <= longDistanceLimit;
+	}
+	
+	private Comparator<Order> sortOrdersByDistance(Location courierLocation) {
+		return Comparator.comparingDouble((Order o) -> (DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
 	}
 	
 }
