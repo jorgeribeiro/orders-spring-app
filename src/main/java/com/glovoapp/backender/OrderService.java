@@ -25,12 +25,18 @@ class OrderService {
 	Double distanceSlot;
 	
 	List<Order> getOrdersByCourier(Courier courier, List<Order> orders) {
-		return orders
+		List<Order> sOrders = orders
 				.stream()
 				.filter(order -> filterBoxOrders(courier.getBox(), order.getDescription()))
 				.filter(order -> filterLongDistanceOrders(courier.getVehicle(), courier.getLocation(), order.getPickup()))
-				.sorted(sortOrdersByDistance(courier.getLocation()))
+				.sorted(sortOrders(courier.getLocation()))
 				.collect(Collectors.toList());
+		
+		sOrders.forEach(o -> System.out.println(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup()) + " " 
+		+ compareSlots(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup())) + " " +
+				o.getVip() + " " + o.getFood()));
+		
+		return sOrders;
 	}
 	
 	private Boolean filterBoxOrders(Boolean hasBox, String orderDescription) {
@@ -41,10 +47,33 @@ class OrderService {
 		return vehicleType == Vehicle.ELECTRIC_SCOOTER || 
 				vehicleType == Vehicle.MOTORCYCLE ||
 				DistanceCalculator.calculateDistance(courierLocation, orderPickup) <= longDistanceLimit;
+	}	
+	
+	private Comparator<Order> sortOrders(Location courierLocation) {
+		return prioritiseOrders(ordersSort.get(0), courierLocation)
+				.thenComparing(prioritiseOrders(ordersSort.get(1), courierLocation))
+				.thenComparing(prioritiseOrders(ordersSort.get(2), courierLocation));
+	}
+
+	private Comparator<Order> prioritiseOrders(String sortType, Location courierLocation) {
+		if (sortType.equals("closest")) {
+			return Comparator.comparingInt((Order o) -> compareSlots(DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
+		} else if (sortType.equals("vip")) {
+			return Comparator.comparing(Order::getVip).reversed();					
+		} else if (sortType.equals("food")) {
+			return Comparator.comparing(Order::getFood).reversed();
+		}
+		return null;
 	}
 	
-	private Comparator<Order> sortOrdersByDistance(Location courierLocation) {
-		return Comparator.comparingDouble((Order o) -> (DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
+	private Integer compareSlots(Double distance) {
+		if (distance < distanceSlot) {
+			return 0;
+		} else if (distance < distanceSlot * 2) {
+			return 1;
+		} else {
+			return 2;
+		}
 	}
 	
 }
