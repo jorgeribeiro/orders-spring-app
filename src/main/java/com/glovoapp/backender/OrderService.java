@@ -32,8 +32,8 @@ class OrderService {
 				.sorted(sortOrders(courier.getLocation()))
 				.collect(Collectors.toList());
 		
-		sOrders.forEach(o -> System.out.println(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup()) + " " 
-		+ compareSlots(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup())) + " " +
+		sOrders.forEach(o -> System.out.println(compareSlots(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup())) + " " + 
+				DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup()) + " " +
 				o.getVip() + " " + o.getFood()));
 		
 		return sOrders;
@@ -52,14 +52,15 @@ class OrderService {
 	private Comparator<Order> sortOrders(Location courierLocation) {
 		return prioritiseOrders(ordersSort.get(0), courierLocation)
 				.thenComparing(prioritiseOrders(ordersSort.get(1), courierLocation))
-				.thenComparing(prioritiseOrders(ordersSort.get(2), courierLocation));
+				.thenComparing(prioritiseOrders(ordersSort.get(2), courierLocation))
+				.thenComparingDouble((Order o) -> DistanceCalculator.calculateDistance(courierLocation, o.getPickup()));
 	}
 
 	private Comparator<Order> prioritiseOrders(String sortType, Location courierLocation) {
 		if (sortType.equals("closest")) {
 			return Comparator.comparingInt((Order o) -> compareSlots(DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
 		} else if (sortType.equals("vip")) {
-			return Comparator.comparing(Order::getVip).reversed();					
+			return Comparator.comparing(Order::getVip).reversed();									
 		} else if (sortType.equals("food")) {
 			return Comparator.comparing(Order::getFood).reversed();
 		}
