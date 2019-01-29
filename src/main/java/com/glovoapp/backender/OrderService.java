@@ -24,50 +24,103 @@ class OrderService {
 	@Value("${backender.order.distance_slot}")
 	Double distanceSlot;
 	
+	/**
+	 * Main method of this Service class. It returns the orders given the courierId,
+	 * filtering box orders and long distance orders, as well as sorting following
+	 * the order sort provided via application.properties
+	 * 
+	 * @param courier
+	 *            Courier fetched via API
+	 * @param orders
+	 *            A full list of all orders
+	 * @return A list of Orders available to this courier
+	 */
 	List<Order> getOrdersByCourier(Courier courier, List<Order> orders) {
-		List<Order> sOrders = orders
+		return orders
 				.stream()
 				.filter(order -> filterBoxOrders(courier.getBox(), order.getDescription()))
 				.filter(order -> filterLongDistanceOrders(courier.getVehicle(), courier.getLocation(), order.getPickup()))
 				.sorted(sortOrders(courier.getLocation()))
 				.collect(Collectors.toList());
-		
-		sOrders.forEach(o -> System.out.println(compareSlots(DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup())) + " " + 
-				DistanceCalculator.calculateDistance(courier.getLocation(), o.getPickup()) + " " +
-				o.getVip() + " " + o.getFood()));
-		
-		return sOrders;
 	}
 	
-	private Boolean filterBoxOrders(Boolean hasBox, String orderDescription) {
+	/**
+	 * This method checks if the Courier has a box, if it hasn't, test if the order
+	 * description contains the words provided via application.properties
+	 * 
+	 * @param hasBox
+	 *            Attribute from Courier
+	 * @param orderDescription
+	 *            Attribute from Order
+	 * @return True if the courier can see the order
+	 */
+	Boolean filterBoxOrders(Boolean hasBox, String orderDescription) {
 		return hasBox || !boxOrders.stream().anyMatch(boxWord -> StringUtils.containsIgnoreCase(orderDescription, boxWord));
 	}
 	
-	private Boolean filterLongDistanceOrders(Vehicle vehicleType, Location courierLocation, Location orderPickup) {
+	/**
+	 * This method checks long distances trips, and returns whether a courier is
+	 * able to pickup it or not
+	 * 
+	 * @param vehicleType
+	 *            Attribute from Courier
+	 * @param courierLocation
+	 *            Attribute from Courier
+	 * @param orderPickup
+	 *            Attribute from Order
+	 * @return True if the courier can see the order
+	 */
+	Boolean filterLongDistanceOrders(Vehicle vehicleType, Location courierLocation, Location orderPickup) {
 		return vehicleType == Vehicle.ELECTRIC_SCOOTER || 
 				vehicleType == Vehicle.MOTORCYCLE ||
 				DistanceCalculator.calculateDistance(courierLocation, orderPickup) <= longDistanceLimit;
 	}	
 	
-	private Comparator<Order> sortOrders(Location courierLocation) {
+	/**
+	 * Sort the orders, based on the property provided via application.properties
+	 * 
+	 * @param courierLocation
+	 *            Attribute from Courier
+	 * @return A comparator capable of sorting orders with 3 different properties
+	 */
+	Comparator<Order> sortOrders(Location courierLocation) {
 		return prioritiseOrders(ordersSort.get(0), courierLocation)
 				.thenComparing(prioritiseOrders(ordersSort.get(1), courierLocation))
 				.thenComparing(prioritiseOrders(ordersSort.get(2), courierLocation))
 				.thenComparingDouble((Order o) -> DistanceCalculator.calculateDistance(courierLocation, o.getPickup()));
 	}
 
-	private Comparator<Order> prioritiseOrders(String sortType, Location courierLocation) {
+	/**
+	 * Method used by sortOrders(Location). It prioritise the orders correctly,
+	 * following the rule from application.properties
+	 * 
+	 * @param sortType
+	 *            The type of sort used when called
+	 * @param courierLocation
+	 *            Attribute from Courier. Used only when handling distances
+	 * @return A comparator to each type of sort
+	 */
+	Comparator<Order> prioritiseOrders(String sortType, Location courierLocation) {
 		if (sortType.equals("closest")) {
-			return Comparator.comparingInt((Order o) -> compareSlots(DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
+			return Comparator.comparingInt(
+					(Order o) -> compareSlots(DistanceCalculator.calculateDistance(courierLocation, o.getPickup())));
 		} else if (sortType.equals("vip")) {
-			return Comparator.comparing(Order::getVip).reversed();									
+			return Comparator.comparing(Order::getVip).reversed();
 		} else if (sortType.equals("food")) {
 			return Comparator.comparing(Order::getFood).reversed();
 		}
 		return null;
 	}
-	
-	private Integer compareSlots(Double distance) {
+
+	/**
+	 * Method used by prioritiseOrders(String, Location). It creates slots based on
+	 * the distance property from application.properties
+	 * 
+	 * @param distance
+	 *            The distance between the Courier and Order Pickup
+	 * @return A specific slot, based on the distance calculated
+	 */
+	Integer compareSlots(Double distance) {
 		if (distance < distanceSlot) {
 			return 0;
 		} else if (distance < distanceSlot * 2) {

@@ -46,6 +46,15 @@ class API {
 				.collect(Collectors.toList());
 	}
 
+	/**
+	 * New endpoint added as requested. Everything works at OrderService, calling
+	 * the method getOrdersByCourier(Courier, List<Order>). I also commented the
+	 * methods on OrderService, to help those who will evaluate the code
+	 * 
+	 * @param courierId
+	 *            Provided via API
+	 * @return Orders available to the Courier provided
+	 */
 	@RequestMapping("/orders/{courierId}")
 	@ResponseBody
 	List<OrderVM> ordersByCourierId(@PathVariable("courierId") String courierId) {
