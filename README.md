@@ -1,10 +1,13 @@
-This is a Java8 Spring Boot project. Get familiar with it and import it into your IDE.
+# Orders Spring App
 
-- Make sure you know how to add a Unit test to the project using Junit5
-- Make sure you know how to execute the test suite
-- Make sure you know how to add a new endpoint
-- Make sure you know how to use application.properties and how to inject configuration
+## Backend test
+Provided by Glovo.
 
-After that, start with the [WORDING](./WORDING.md). Good luck :)!
+## Requirements
+- Hide orders to couriers based on a maximum distance and box availability
+- Prioritise orders based on distance, vip and food (the order can be changed on application.properties)
+- Orders that require box can be changed on application.properties too
+- Write tests
 
-
+## Status
+All done!
