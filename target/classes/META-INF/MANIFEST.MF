@@ -1,9 +1,9 @@
 Manifest-Version: 1.0
 Implementation-Title: backender
 Implementation-Version: 1.0-SNAPSHOT
-Built-By: jorgeribeiro
+Built-By: jribeiro
 Implementation-Vendor-Id: com.glovoapp
-Build-Jdk: 1.8.0_191
+Build-Jdk: 1.8.0_162
 Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
  ot-starter-parent/backender
 Created-By: Maven Integration for Eclipse

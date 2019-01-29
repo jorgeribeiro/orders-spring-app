@@ -7,11 +7,9 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 @Service
-@EnableAutoConfiguration
 class OrderService {
 	List<String> boxOrders;	
 	Double longDistanceLimit;
@@ -19,16 +17,14 @@ class OrderService {
 	Double distanceSlot;
 	
 	@Autowired
-	public OrderService(@Value("#{'${backender.order.box}'.split(',')}")List<String> boxOrders, 
+	public OrderService(@Value("#{'${backender.order.box}'.split(',')}") List<String> boxOrders, 
 			@Value("${backender.order.long_distance_limit}") Double longDistanceLimit, 
 			@Value("#{'${backender.order.sort}'.split(',')}") List<String> ordersSort,
 			@Value("${backender.order.distance_slot}") Double distanceSlot) {
 		this.boxOrders = boxOrders;
 		this.longDistanceLimit = longDistanceLimit;
 		this.ordersSort = ordersSort;
-		this.distanceSlot = distanceSlot;
-		
-		System.out.println(boxOrders != null);
+		this.distanceSlot = distanceSlot;		
 	}
 
 	/**
