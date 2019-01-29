@@ -5,25 +5,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Service;
 
 @Service
 @EnableAutoConfiguration
 class OrderService {
-	@Value("#{'${backender.order.box}'.split(',')}")
 	List<String> boxOrders;	
-	
-	@Value("${backender.order.long_distance_limit}")
 	Double longDistanceLimit;
-	
-	@Value("#{'${backender.order.sort}'.split(',')}")
 	List<String> ordersSort;
-	
-	@Value("${backender.order.distance_slot}")
 	Double distanceSlot;
 	
+	public OrderService(List<String> boxOrders, Double longDistanceLimit, List<String> ordersSort,
+			Double distanceSlot) {
+		this.boxOrders = boxOrders;
+		this.longDistanceLimit = longDistanceLimit;
+		this.ordersSort = ordersSort;
+		this.distanceSlot = distanceSlot;
+	}
+
 	/**
 	 * Main method of this Service class. It returns the orders given the courierId,
 	 * filtering box orders and long distance orders, as well as sorting following
