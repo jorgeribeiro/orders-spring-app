@@ -77,7 +77,8 @@ class OrderService {
 	}	
 	
 	/**
-	 * Sort the orders, based on the property provided via application.properties
+	 * Sort the orders, based on the property provided via application.properties.
+	 * After the three types of sorts, sort by distance
 	 * 
 	 * @param courierLocation
 	 *            Attribute from Courier

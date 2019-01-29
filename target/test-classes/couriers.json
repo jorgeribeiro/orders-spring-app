@@ -8,5 +8,15 @@
       "lat": 41.3965463,
       "lon": 2.1963997
     }
+  },
+  {
+    "id": "courier-2",
+    "name": "Esteban Golson",
+    "box": false,
+    "vehicle": "BICYCLE",
+    "location": {
+      "lat": 41.3857270,
+      "lon": 2.1611940
+    }
   }
 ]

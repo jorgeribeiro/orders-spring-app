@@ -1,5 +1,9 @@
 package com.glovoapp.backender;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
@@ -9,9 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @ComponentScan("com.glovoapp.backender")
@@ -59,8 +60,11 @@ class API {
 	@ResponseBody
 	List<OrderVM> ordersByCourierId(@PathVariable("courierId") String courierId) {
 		Courier courier = courierRepository.findById(courierId);
+		if (courier == null) {
+			return new ArrayList<OrderVM>();
+		}
+		
 		List<Order> orders = orderRepository.findAll();
-
 		return orderService.getOrdersByCourier(courier, orders)
 				.stream()
 				.map(order -> new OrderVM(order.getId(), order.getDescription()))
